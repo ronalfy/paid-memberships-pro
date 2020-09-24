@@ -55,7 +55,7 @@ function pmpro_membership_level_profile_fields($user)
 				if(empty($membership_values) || pmpro_isLevelFree($membership_values))
                 {
 					if(!empty($membership_values->original_initial_payment) && $membership_values->original_initial_payment > 0)
-						echo __('Paid', 'paid-memberships-pro' ) . pmpro_formatPrice($membership_values->original_initial_payment) . ".";
+						echo __('Paid', 'paid-memberships-pro' ) . " " . pmpro_formatPrice($membership_values->original_initial_payment) . ".";
 					else
 						_e('Not paying.', 'paid-memberships-pro' );
 				}
@@ -457,6 +457,15 @@ function pmpro_member_profile_edit_form() {
 			}
 		}
 
+		/**
+		 * Fires before member profile update errors are returned.
+		 *
+		 * @param $errors WP_Error object (passed by reference).
+		 * @param $update Whether this is a user update.
+		 * @param $user   User object (passed by reference).
+		 */
+		do_action_ref_array( 'pmpro_user_profile_update_errors', array( &$errors, $update, &$user ) );
+
 		// Show error messages.
 		if ( ! empty( $errors ) ) { ?>
 			<div class="<?php echo pmpro_get_element_class( 'pmpro_message pmpro_error', 'pmpro_error' ); ?>">
@@ -513,7 +522,7 @@ function pmpro_member_profile_edit_form() {
 							<input type="text" readonly="readonly" name="user_email" id="user_email" value="<?php echo esc_attr( $user->user_email ); ?>" class="<?php echo pmpro_get_element_class( 'input', 'user_email' ); ?>" />
 							<p class="<?php echo pmpro_get_element_class( 'lite' ); ?>"><?php esc_html_e( 'Site administrators must use the WordPress dashboard to update their email address.', 'paid-memberships-pro' ); ?></p>
 						<?php } else { ?>
-							<input type="text" name="<?php echo esc_attr( $field_key ); ?>" id="<?php echo esc_attr( $field_key ); ?>" value="<?php echo esc_attr( $user->{$field_key} ); ?>" class="<?php echo pmpro_get_element_class( 'input', $field_key ); ?>" />
+							<input type="text" name="<?php echo esc_attr( $field_key ); ?>" id="<?php echo esc_attr( $field_key ); ?>" value="<?php echo esc_attr( stripslashes( $user->{$field_key} ) ); ?>" class="<?php echo pmpro_get_element_class( 'input', $field_key ); ?>" />
 						<?php } ?>
 	            	</div>
 				<?php } ?>
